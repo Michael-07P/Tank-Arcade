@@ -7,6 +7,10 @@ using namespace std;
 
 class Tank : public RectangleShape
 {
+
+public:
+    sf::Vector2f velocity;
+
 protected:
     string filename;
     float width;
@@ -17,33 +21,67 @@ protected:
 public:
 
     Tank(string filename, Vector2f size, float speed) 
-        : RectangleShape(size), filename(filename), width(size.x), height(size.y), speed(speed) {}
+        : RectangleShape(size), filename(filename), width(size.x), height(size.y), speed(speed), velocity(0.f, 0.f) {}
 
-    sf::Vector2f velocity = sf::Vector2f(0.f, 0.f);
 
     void initialize() {
         if(!texture.loadFromFile(filename)){
             cout << "Error while loading assets";
         }
-        setSize(Vector2f(static_cast<float>(texture.getSize().x), static_cast<float>(texture.getSize().y)));
         setTexture(&texture);
+        setSize({width, height});
+        setOrigin({
+            width / 2.f,
+            height / 2.f
+        });
     }
 
     void handleInput()
     {
         velocity = sf::Vector2f(0.f, 0.f);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
             velocity.y = -speed;
+            setRotation(sf::degrees(0.f));
+        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
             velocity.y = speed;
+            setRotation(sf::degrees(180.f));
+        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
             velocity.x = -speed;
+            setRotation(sf::degrees(270.f));
+        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
             velocity.x = speed;
+            setRotation(sf::degrees(90.f));
+        }
+            
+    }
+
+    Vector2f fire() {
+        float rotation = getRotation().asDegrees();
+
+        if (rotation == 0.f) {
+            return {0.f, -1.f};
+        }
+
+        if (rotation == 90.f) {
+            return {1.f, 0.f};
+        }
+
+        if (rotation == 180.f) {
+            return {0.f, 1.f};
+        }
+
+        if (rotation == 270.f) {
+            return {-1.f, 0.f};
+        }
+
+        return {0.f, -1.f}; 
     }
 
     void update(float dt)
