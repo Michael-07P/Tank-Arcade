@@ -1,6 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+enum class BulletOwner {
+    Player,
+    Enemy
+};
+
 class Bullet {
 
 protected:
@@ -9,6 +14,7 @@ protected:
     float speed = 200.f;
     int damage = 50;
     bool alive;
+    BulletOwner owner;
     static sf::Texture& sharedTexture() {
         static sf::Texture texture;
         static bool initialized = false;
@@ -26,8 +32,8 @@ protected:
     sf::Sprite bullet;
 
 public:
-    Bullet(sf::Vector2f position, sf::Vector2f direction, bool alive=true)
-        : position(position), direction(direction), alive(alive), bullet(sharedTexture()) {
+    Bullet(sf::Vector2f position, sf::Vector2f direction, BulletOwner owner = BulletOwner::Player, bool alive=true)
+        : position(position), direction(direction), alive(alive), owner(owner), bullet(sharedTexture()) {
         bullet.setPosition(position);
     };
 
@@ -48,5 +54,13 @@ public:
 
     bool  isAlive() const {
         return alive;
+    }
+
+    BulletOwner getOwner() const {
+        return owner;
+    }
+
+    sf::FloatRect bounds() {
+        return bullet.getGlobalBounds();
     }
 };

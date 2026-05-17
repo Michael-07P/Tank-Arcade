@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>
@@ -17,11 +18,13 @@ protected:
     float height;
     float speed;
     Texture texture;
+    int hp;
+    bool alive;
 
 public:
 
-    Tank(string filename, Vector2f size, float speed) 
-        : RectangleShape(size), filename(filename), width(size.x), height(size.y), speed(speed), velocity(0.f, 0.f) {}
+    Tank(string filename, Vector2f size, float speed, int hp=100, bool alive=true) 
+        : RectangleShape(size), filename(filename), width(size.x), height(size.y), speed(speed), velocity(0.f, 0.f), hp(hp), alive(alive) {}
 
 
     void initialize() {
@@ -87,5 +90,21 @@ public:
     void update(float dt)
     {
         move(sf::Vector2f(velocity.x * dt, velocity.y * dt));
+    }
+
+    void takeDamage(int damage) {
+        hp -= damage;
+
+        if(hp <= 0) {
+            alive = false;
+        }
+    }
+
+    bool isAlive() const {
+        return alive;
+    }
+
+    sf::FloatRect bounds() {
+        return this->getGlobalBounds();
     }
 };
