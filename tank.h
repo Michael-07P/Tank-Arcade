@@ -107,4 +107,11 @@ public:
     sf::FloatRect bounds() {
         return this->getGlobalBounds();
     }
+
+    void respawn(sf::Vector2f spawnPosition) {
+        alive = true;
+        hp = 100;
+        setPosition(spawnPosition);
+        velocity = sf::Vector2f(0.f, 0.f);
+    }
 };
