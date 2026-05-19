@@ -1,5 +1,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -100,6 +101,40 @@ int main() {
                                        titleBounds.position.y + titleBounds.size.y + 20.f +
                                            smallBounds.size.y * 0.5f));
 
+    // Game music
+    sf::Music music;
+    const bool musicLoaded = music.openFromFile("music.mp3");
+    if (!musicLoaded) {
+        std::cerr << "Error loading music: music.mp3\n";
+    }
+    music.setLooping(true);
+
+    // Shoot Sound effects
+    sf::SoundBuffer shootBuffer;
+    if (!shootBuffer.loadFromFile("shoot.mp3")) {
+        std::cout << "Error loading sound: shoot.mp3\n";
+    }
+    sf::Sound shoot(shootBuffer);
+    bool shootPlayed = false;
+
+    // Damage hit Sound effects
+    sf::SoundBuffer hitBuffer;
+    if (!hitBuffer.loadFromFile("hit.mp3")) {
+        std::cout << "Error loading sound: hit.mp3\n";
+    }
+    sf::Sound hit(hitBuffer);
+    bool hitPlayed = false;
+
+    // Win sound effect
+    sf::SoundBuffer winnerBuffer;
+    if (!winnerBuffer.loadFromFile("winner.mp3")) {
+        std::cout << "Error loading sound: winner.mp3\n";
+    }
+
+    sf::Sound winner(winnerBuffer);
+    bool winnerPlayed = false;
+
+
     while (window.isOpen()) {
         float dt = clock.restart().asSeconds();
 
@@ -116,6 +151,9 @@ int main() {
 
         switch (menu.currentState) {
             case Menu::MENU: {
+                music.stop();
+                winnerPlayed = false;
+
                 if (titleFontLoaded) {
                     window.draw(titleText);
                     window.draw(smallText);
@@ -128,6 +166,12 @@ int main() {
             }
 
             case Menu::WIN: {
+                music.stop();
+                if (!winnerPlayed) {
+                    winner.play();
+                    winnerPlayed = true;
+                }
+                
                 if (titleFontLoaded) {
                     window.draw(winnerText);
                 }
@@ -143,7 +187,10 @@ int main() {
             }
 
             case Menu::PLAY: {
-                
+                winnerPlayed = false;
+                if(music.getStatus() != sf::Music::Status::Playing) {
+                    music.play();
+                }
                 if(!player.isAlive()) {
                     menu.currentState = Menu::MENU;
                     player.respawn(playerSpawn);
@@ -168,6 +215,9 @@ int main() {
                     bullets.emplace_back(pos, player.fire(), BulletOwner::Player);
                     std::cout << bullets.size() << std::endl;
                     shootClock.restart();
+                    if(!shootPlayed) {
+                        shoot.play();
+                    }
                 }
                 spaceWasDown = spaceDown;
 
@@ -262,12 +312,18 @@ int main() {
                             bullets[i].bounds().findIntersection(enemy.bounds())) {
                             enemy.takeDamage(50);
                             bullets[i].destroy();
+                            if (!hitPlayed) {
+                                hit.play();
+                            }
                         }
 
                         if (bullets[i].getOwner() == BulletOwner::Player &&
                             bullets[i].bounds().findIntersection(enemy2.bounds())) {
                             enemy2.takeDamage(50);
                             bullets[i].destroy();
+                            if (!hitPlayed) {
+                                hit.play();
+                            }
                         }
 
                         if (player.isAlive() &&

@@ -18,7 +18,8 @@
                 "-Wl,-rpath,/opt/sfml-3/lib",
                 "-lsfml-graphics",
                 "-lsfml-window",
-                "-lsfml-system"
+                "-lsfml-system",
+                "-lsfml-audio"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
