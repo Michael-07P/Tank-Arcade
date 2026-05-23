@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+// Represents a tile-based map for the level.
 class Map {
 private:
     std::vector<std::vector<int>> grid; // 2D grid representing the map (0 for empty, 1 for wall, etc.)

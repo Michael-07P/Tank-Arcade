@@ -1,12 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "gameobject.h"
 
 enum class BulletOwner {
     Player,
     Enemy
 };
 
-class Bullet {
+// Represents a projectile fired by player or enemy tanks.
+class Bullet : public GameObject {
 
 protected:
     sf::Vector2f position;
@@ -38,13 +40,13 @@ public:
     };
 
 
-    void update(float dt) {
+    void update(float dt) override {
         position.x += direction.x * speed * dt;
         position.y += direction.y * speed * dt;
         bullet.setPosition(position);
     }
 
-    void draw(sf::RenderWindow& window) const {
+    void draw(sf::RenderWindow& window) override {
         window.draw(bullet);
     }
 

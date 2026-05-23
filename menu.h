@@ -5,6 +5,7 @@
 
 using namespace sf;
 
+// Represents simple menu state for the game.
 class Menu {
 
 public:

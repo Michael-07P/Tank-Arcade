@@ -4,7 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 
-
+// Represents enemy tank controlled by simple AI.
 class EnemyTank : public Tank {
 
 public:

@@ -2,11 +2,13 @@
 #include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "gameobject.h"
 
 using namespace sf;
 using namespace std;
 
-class Tank : public RectangleShape
+// Represents a controllable tank with health and movement.
+class Tank : public RectangleShape, public GameObject
 {
 
 public:
@@ -87,9 +89,13 @@ public:
         return {0.f, -1.f}; 
     }
 
-    void update(float dt)
+    void update(float dt) override
     {
         move(sf::Vector2f(velocity.x * dt, velocity.y * dt));
+    }
+
+    void draw(sf::RenderWindow& window) override {
+        window.draw(*this);
     }
 
     void takeDamage(int damage) {
